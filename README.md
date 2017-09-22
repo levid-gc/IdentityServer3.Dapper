@@ -1,5 +1,5 @@
 # IdentityServer3.Dapper
-Dapper for IdentityServer3 including Clinet, Scope, Token and etc.
+Dapper for IdentityServer3 including Clinet, Scope and Token etc.
 
 In dev, please don't use it.
 
