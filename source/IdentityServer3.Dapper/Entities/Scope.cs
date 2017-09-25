@@ -1,16 +1,21 @@
-﻿#region Usings
-
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-#endregion
-
 namespace IdentityServer3.Dapper.Entities
 {
-    public class Scope
+    public class Scope : Scope<string>
+    {
+        public Scope()
+        {
+            Id = Guid.NewGuid().ToString();
+        }
+    }
+
+    public class Scope<TKey>
     {
         [Key]
-        public virtual string Id { get; set; }
+        public virtual TKey Id { get; set; }
 
         public virtual bool Enabled { get; set; }
 
@@ -42,27 +47,5 @@ namespace IdentityServer3.Dapper.Entities
         public virtual ICollection<ScopeClaim> ScopeClaims { get; set; }
 
         public virtual ICollection<ScopeSecret> ScopeSecrets { get; set; }
-
-        public override bool Equals(object obj)
-        {
-            if (this == obj)
-            {
-                return true;
-            }
-
-            if (obj == null || GetType() != obj.GetType())
-            {
-                return false;
-            }
-
-            var other = (Scope)obj;
-
-            return Id == other.Id;
-        }
-
-        public override int GetHashCode()
-        {
-            return Id.GetHashCode();
-        }
     }
 }

@@ -1,15 +1,14 @@
-﻿#region Usings
-
-using System.ComponentModel.DataAnnotations;
-
-#endregion
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace IdentityServer3.Dapper.Entities
 {
-    public class ClientCustomGrantType
+    public class ClientCustomGrantType : ClientCustomGrantType<int>
+    { }
+
+    public class ClientCustomGrantType<TKey>
     {
         [Key]
-        public virtual int Id { get; set; }
+        public virtual TKey Id { get; set; }
 
         [Required]
         [StringLength(250)]

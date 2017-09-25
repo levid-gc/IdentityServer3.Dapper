@@ -1,18 +1,25 @@
-﻿#region Usings
-
-using IdentityServer3.Core.Models;
+﻿using IdentityServer3.Core.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-#endregion
-
 namespace IdentityServer3.Dapper.Entities
 {
-    public class Client
+    public class Client : Client<string>
+    {
+        /// <summary>
+        /// Constructor which creates a new Guid for the Id
+        /// </summary>
+        public Client()
+        {
+            Id = Guid.NewGuid().ToString();
+        }
+    }
+
+    public class Client<TKey>
     {
         [Key]
-        public virtual int Id { get; set; }
+        public virtual TKey Id { get; set; }
 
         public virtual bool Enabled { get; set; }
 

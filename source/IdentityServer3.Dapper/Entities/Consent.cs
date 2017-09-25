@@ -1,9 +1,5 @@
-﻿#region Usings
-
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
-#endregion
 
 namespace IdentityServer3.Dapper.Entities
 {

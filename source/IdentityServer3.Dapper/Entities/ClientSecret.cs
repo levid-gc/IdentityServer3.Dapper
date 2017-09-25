@@ -1,16 +1,15 @@
-﻿#region Usings
-
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
-
-#endregion
 
 namespace IdentityServer3.Dapper.Entities
 {
-    public class ClientSecret
+    public class ClientSecret : ClientSecret<int>
+    { }
+
+    public class ClientSecret<TKey>
     {
         [Key]
-        public virtual int Id { get; set; }
+        public virtual TKey Id { get; set; }
 
         [Required]
         [StringLength(250)]

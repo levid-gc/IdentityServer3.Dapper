@@ -1,15 +1,14 @@
-﻿#region Usings
-
-using System.ComponentModel.DataAnnotations;
-
-#endregion
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace IdentityServer3.Dapper.Entities
 {
-    public class ScopeClaim
+    public class ScopeClaim : ScopeClaim<int>
+    { }
+
+    public class ScopeClaim<TKey>
     {
         [Key]
-        public virtual string Id { get; set; }
+        public virtual TKey Id { get; set; }
 
         [Required]
         [StringLength(200)]
@@ -21,27 +20,5 @@ namespace IdentityServer3.Dapper.Entities
         public virtual bool AlwaysIncludeInIdToken { get; set; }
 
         public virtual Scope Scope { get; set; }
-
-        public override bool Equals(object obj)
-        {
-            if (this == obj)
-            {
-                return true;
-            }
-
-            if (obj == null || GetType() != obj.GetType())
-            {
-                return false;
-            }
-
-            var other = (ScopeClaim)obj;
-
-            return Id == other.Id;
-        }
-
-        public override int GetHashCode()
-        {
-            return Id.GetHashCode();
-        }
     }
 }

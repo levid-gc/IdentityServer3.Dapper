@@ -1,15 +1,14 @@
-﻿#region Usings
-
-using System.ComponentModel.DataAnnotations;
-
-#endregion
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace IdentityServer3.Dapper.Entities
 {
-    public class ClientCorsOrigin
+    public class ClientCorsOrigin : ClientCorsOrigin<int>
+    { }
+
+    public class ClientCorsOrigin<TKey>
     {
         [Key]
-        public virtual int Id { get; set; }
+        public virtual TKey Id { get; set; }
 
         [Required]
         [StringLength(150)]
