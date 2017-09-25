@@ -61,13 +61,13 @@ CREATE TABLE [dbo].[Clients] (
     [AlwaysSendClientClaims] [bit] NOT NULL,
     [PrefixClientClaims] [bit] NOT NULL,
     [AllowAccessToAllScopes] [bit] NOT NULL,
-	[AllowAccessToAllGrantTypes] [bit] NOT NULL,
-	[AllowClientCredentialsOnly] [bit] NOT NULL,
-	[UpdateAccessTokenOnRefresh] [bit] NOT NULL,
-	[LogoutUri] [nvarchar](max) NULL,
-	[LogoutSessionRequired] [bit] NOT NULL,
-	[RequireSignOutPrompt] [bit] NOT NULL,
-	[AllowAccessTokensViaBrowser] [bit] NOT NULL,
+    [AllowAccessToAllGrantTypes] [bit] NOT NULL,
+    [AllowClientCredentialsOnly] [bit] NOT NULL,
+    [UpdateAccessTokenOnRefresh] [bit] NOT NULL,
+    [LogoutUri] [nvarchar](max) NULL,
+    [LogoutSessionRequired] [bit] NOT NULL,
+    [RequireSignOutPrompt] [bit] NOT NULL,
+    [AllowAccessTokensViaBrowser] [bit] NOT NULL,
     CONSTRAINT [PK_dbo.Clients] PRIMARY KEY ([Id])
 )
 CREATE UNIQUE INDEX [IX_ClientId] ON [dbo].[Clients]([ClientId])
