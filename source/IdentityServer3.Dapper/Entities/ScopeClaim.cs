@@ -2,13 +2,10 @@
 
 namespace IdentityServer3.Dapper.Entities
 {
-    public class ScopeClaim : ScopeClaim<int>
-    { }
-
-    public class ScopeClaim<TKey>
+    public class ScopeClaim
     {
         [Key]
-        public virtual TKey Id { get; set; }
+        public virtual int Id { get; set; }
 
         [Required]
         [StringLength(200)]

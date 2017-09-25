@@ -1,21 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace IdentityServer3.Dapper.Entities
 {
-    public class Scope : Scope<string>
-    {
-        public Scope()
-        {
-            Id = Guid.NewGuid().ToString();
-        }
-    }
-
-    public class Scope<TKey>
+    public class Scope
     {
         [Key]
-        public virtual TKey Id { get; set; }
+        public virtual int Id { get; set; }
 
         public virtual bool Enabled { get; set; }
 

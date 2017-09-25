@@ -3,13 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace IdentityServer3.Dapper.Entities
 {
-    public class ScopeSecret : ScopeSecret<int>
-    { }
-
-    public class ScopeSecret<TKey>
+    public class ScopeSecret
     {
         [Key]
-        public virtual TKey Id { get; set; }
+        public virtual int Id { get; set; }
 
         [StringLength(1000)]
         public virtual string Description { get; set; }
