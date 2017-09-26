@@ -7,7 +7,7 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Reflection;
 
-namespace IdentityServer3.Tests.IntegrationTests.SQLServer
+namespace IdentityServer3.Dapper.Tests.IntegrationTests.SQLServer
 {
     public class SQLServerTestBase
     {
