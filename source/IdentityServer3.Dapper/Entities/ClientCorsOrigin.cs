@@ -2,13 +2,10 @@
 
 namespace IdentityServer3.Dapper.Entities
 {
-    public class ClientCorsOrigin : ClientCorsOrigin<int>
-    { }
-
-    public class ClientCorsOrigin<TKey>
+    public class ClientCorsOrigin
     {
         [Key]
-        public virtual TKey Id { get; set; }
+        public virtual int Id { get; set; }
 
         [Required]
         [StringLength(150)]

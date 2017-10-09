@@ -2,13 +2,10 @@
 
 namespace IdentityServer3.Dapper.Entities
 {
-    public class ClientScope : ClientScope<int>
-    { }
-
-    public class ClientScope<TKey>
+    public class ClientScope
     {
         [Key]
-        public virtual TKey Id { get; set; }
+        public virtual int Id { get; set; }
 
         [Required]
         [StringLength(200)]

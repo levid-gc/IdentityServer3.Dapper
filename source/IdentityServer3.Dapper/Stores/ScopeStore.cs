@@ -1,15 +1,13 @@
-﻿#region Usings
-
-using Dapper;
+﻿using Dapper;
+using DapperExtensions;
 using IdentityServer3.Core.Services;
 using IdentityServer3.Dapper.Entities;
+using IdentityServer3.Dapper.Mappers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-
-#endregion
 
 namespace IdentityServer3.Dapper
 {
@@ -31,153 +29,98 @@ namespace IdentityServer3.Dapper
 
         public async Task<IEnumerable<IdentityServer3.Core.Models.Scope>> FindScopesAsync(IEnumerable<string> scopeNames)
         {
-            Scope[] list = null;
-            List<Scope> scopes = null;
-
-            var sql = @"SELECT 
-                                * 
-                        FROM 
-                                SACCORE.T_SCOPE AS A 
-                        LEFT JOIN
-                                SACCORE.T_SCOPE_CLAIM AS B ON B.SCOPE_ID = A.ID 
-                        LEFT JOIN
-                                SACCORE.T_SCOPE_SECRET AS C ON C.SCOPE_ID = A.ID ";
+            IPredicate predicate = null;
+            var parameters = new Dictionary<string, object>();
+            var dynamicParameters = new DynamicParameters();
 
             if (scopeNames != null && scopeNames.Any())
             {
-                sql += @"WHERE A.Name IN @Names";
-
-                if (options != null && options.SynchronousReads)
-                {
-                    list = this.options.Connection
-                        .Query<Scope, ScopeClaim, ScopeSecret, Scope>(sql, func, new { Names = scopeNames.ToArray() }).ToArray();
-                } 
-                else
-                {
-                    list = (await this.options.Connection
-                        .QueryAsync<Scope, ScopeClaim, ScopeSecret, Scope>(sql, func, new { Names = scopeNames.ToArray() })).ToArray();
-                }
+                predicate = Predicates.Field<Scope>(s => s.Name, Operator.Eq, scopeNames.ToArray());
             }
-            else
+
+            var sql = options.SqlGenerator.Select(new ScopeMapper(options), predicate, null, parameters);
+
+            foreach (var parameter in parameters)
             {
-                if (options != null && options.SynchronousReads)
+                dynamicParameters.Add(parameter.Key, parameter.Value);
+            }
+
+            var scopes = await options.Connection.QueryAsync<Scope>(sql, dynamicParameters);
+
+            foreach (var scope in scopes)
+            {
+                parameters = new Dictionary<string, object>();
+
+                var predicate1 = Predicates.Field<ScopeClaim>(s => s.ScopeId, Operator.Eq, scope.Id);
+                var sql1 = options.SqlGenerator.Select(new ScopeClaimMapper(options), predicate1, null, parameters);
+
+                var predicate2 = Predicates.Field<ScopeSecret>(s => s.ScopeId, Operator.Eq, scope.Id);
+                var sql2 = options.SqlGenerator.Select(new ScopeSecretMapper(options), predicate2, null, parameters);
+
+                sql = sql1 + " " + sql2;
+
+                dynamicParameters = new DynamicParameters();
+                foreach (var parameter in parameters)
                 {
-                    list = this.options.Connection
-                        .Query<Scope, ScopeClaim, ScopeSecret, Scope>(sql, func).ToArray();
+                    dynamicParameters.Add(parameter.Key, parameter.Value);
                 }
-                else
+
+                using (var multi = await options.Connection.QueryMultipleAsync(sql, dynamicParameters))
                 {
-                    list = (await this.options.Connection
-                        .QueryAsync<Scope, ScopeClaim, ScopeSecret, Scope>(sql, func)).ToArray();
+                    scope.ScopeClaims = multi.Read<ScopeClaim>().ToList();
+                    scope.ScopeSecrets = multi.Read<ScopeSecret>().ToList();
                 }
             }
 
-            scopes = Parse(list);
             return scopes.Select(x => x.ToModel());
         }
 
         public async Task<IEnumerable<IdentityServer3.Core.Models.Scope>> GetScopesAsync(bool publicOnly = true)
         {
-            Scope[] list = null;
-            List<Scope> scopes = null;
-
-            var sql = @"SELECT 
-                                * 
-                        FROM 
-                                SACCORE.T_SCOPE AS A 
-                        LEFT JOIN
-                                SACCORE.T_SCOPE_CLAIM AS B ON B.SCOPE_ID = A.ID 
-                        LEFT JOIN
-                                SACCORE.T_SCOPE_SECRET AS C ON C.SCOPE_ID = A.ID ";
+            IPredicate predicate = null;
+            var parameters = new Dictionary<string, object>();
+            var dynamicParameters = new DynamicParameters();
 
             if (publicOnly)
             {
-                sql += @"WHERE A.ShowInDiscoveryDocument = @ShowInDiscoveryDocument";
-
-                if (options != null && options.SynchronousReads)
-                {
-                    list = this.options.Connection
-                        .Query<Scope, ScopeClaim, ScopeSecret, Scope>(sql, func, new { ShowInDiscoveryDocument = true }).ToArray();
-                }
-                else
-                {
-                    list = (await this.options.Connection
-                        .QueryAsync<Scope, ScopeClaim, ScopeSecret, Scope>(sql, func, new { ShowInDiscoveryDocument = true })).ToArray();
-                }
+                predicate = Predicates.Field<Scope>(s => s.ShowInDiscoveryDocument, Operator.Eq, true);
             }
-            else
+
+            var sql = options.SqlGenerator.Select(new ScopeMapper(options), predicate, null, parameters);
+
+            foreach (var parameter in parameters)
             {
-                if (options != null && options.SynchronousReads)
-                {
-                    list = this.options.Connection
-                        .Query<Scope, ScopeClaim, ScopeSecret, Scope>(sql, func).ToArray();
-                }
-                else
-                {
-                    list = (await this.options.Connection
-                        .QueryAsync<Scope, ScopeClaim, ScopeSecret, Scope>(sql, func)).ToArray();
-                }
+                dynamicParameters.Add(parameter.Key, parameter.Value);
             }
 
-            scopes = Parse(list);
+            var scopes = await options.Connection.QueryAsync<Scope>(sql, dynamicParameters);
+
+            foreach (var scope in scopes)
+            {
+                parameters = new Dictionary<string, object>();
+
+                var predicate1 = Predicates.Field<ScopeClaim>(s => s.ScopeId, Operator.Eq, scope.Id);
+                var sql1 = options.SqlGenerator.Select(new ScopeClaimMapper(options), predicate1, null, parameters);
+
+                var predicate2 = Predicates.Field<ScopeSecret>(s => s.ScopeId, Operator.Eq, scope.Id);
+                var sql2 = options.SqlGenerator.Select(new ScopeSecretMapper(options), predicate2, null, parameters);
+
+                sql = sql1 + " " + sql2;
+
+                dynamicParameters = new DynamicParameters();
+                foreach (var parameter in parameters)
+                {
+                    dynamicParameters.Add(parameter.Key, parameter.Value);
+                }
+
+                using (var multi = await options.Connection.QueryMultipleAsync(sql, dynamicParameters))
+                {
+                    scope.ScopeClaims = multi.Read<ScopeClaim>().ToList();
+                    scope.ScopeSecrets = multi.Read<ScopeSecret>().ToList();
+                }
+            }
 
             return scopes.Select(x => x.ToModel());
-        }
-
-        private List<Scope> Parse(Scope[] list)
-        {
-            List<Scope> scopes = new List<Scope>();
-
-            var groups = list.GroupBy(s => s.Id);
-
-            foreach (var group in groups)
-            {
-                foreach (var scope in group)
-                {
-                    if (!scopes.Contains(scope))
-                    {
-                        if (scope.ScopeClaims != null)
-                        {
-                            scope.ScopeClaims.FirstOrDefault().Scope = scope;
-                        }
-                        else
-                        {
-                            scope.ScopeClaims = new Collection<ScopeClaim>();
-                        }
-
-                        if (scope.ScopeSecrets != null)
-                        {
-                            scope.ScopeSecrets.FirstOrDefault().Scope = scope;
-                        }
-                        else
-                        {
-                            scope.ScopeSecrets = new Collection<ScopeSecret>();
-                        }
-
-                        scopes.Add(scope);
-                    }
-                    else
-                    {
-                        var archievedScope = scopes.Where(s => s.Id == scope.Id).FirstOrDefault();
-
-                        if (scope.ScopeClaims != null && archievedScope.ScopeClaims.Contains(scope.ScopeClaims.FirstOrDefault()))
-                        {
-                            var scopeClaim = scope.ScopeClaims.FirstOrDefault();
-                            scopeClaim.Scope = archievedScope;
-                            archievedScope.ScopeClaims.Add(scopeClaim);
-                        }
-
-                        if (scope.ScopeSecrets != null && archievedScope.ScopeSecrets.Contains(scope.ScopeSecrets.FirstOrDefault()))
-                        {
-                            var scopeSecret = scope.ScopeSecrets.FirstOrDefault();
-                            scopeSecret.Scope = archievedScope;
-                            archievedScope.ScopeSecrets.Add(scopeSecret);
-                        }
-                    }
-                }
-            }
-
-            return scopes;
         }
     }
 }

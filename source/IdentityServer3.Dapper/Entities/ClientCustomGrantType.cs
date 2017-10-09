@@ -2,13 +2,10 @@
 
 namespace IdentityServer3.Dapper.Entities
 {
-    public class ClientCustomGrantType : ClientCustomGrantType<int>
-    { }
-
-    public class ClientCustomGrantType<TKey>
+    public class ClientCustomGrantType
     {
         [Key]
-        public virtual TKey Id { get; set; }
+        public virtual int Id { get; set; }
 
         [Required]
         [StringLength(250)]

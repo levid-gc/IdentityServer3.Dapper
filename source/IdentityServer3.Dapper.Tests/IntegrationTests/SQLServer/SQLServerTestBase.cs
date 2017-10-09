@@ -1,18 +1,16 @@
 ﻿using Dapper;
-using DapperExtensions;
-using DapperExtensions.Mapper;
-using DapperExtensions.Sql;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
-using System.Reflection;
 
 namespace IdentityServer3.Dapper.Tests.IntegrationTests.SQLServer
 {
     public class SQLServerTestBase
     {
-        protected IDatabase Db;
-
+        protected DapperServiceOptions options;
+        protected DbType dbType = DbType.SQLServer;
+        
         protected SQLServerTestBase()
         {
             Setup();
@@ -20,10 +18,10 @@ namespace IdentityServer3.Dapper.Tests.IntegrationTests.SQLServer
 
         public virtual void Setup()
         {
-            var connection = new SqlConnection("Data Source=.;Initial Catalog=dapperTest;Integrated security=True;");
-            var config = new DapperExtensionsConfiguration(typeof(AutoClassMapper<>), new List<Assembly>(), new SqlServerDialect());
-            var sqlGenerator = new SqlGeneratorImpl(config);
-            Db = new Database(connection, sqlGenerator);
+            
+            options = new DapperServiceOptions(
+                new SqlConnection("Data Source=.;Initial Catalog=IdentityServer3;Integrated security=True;"), dbType);
+
             var files = new List<string>
                                 {
                                     ReadScriptFile("clients"),
@@ -33,7 +31,7 @@ namespace IdentityServer3.Dapper.Tests.IntegrationTests.SQLServer
 
             foreach (var setupFile in files)
             {
-                connection.Execute(setupFile);
+                options.Connection.Execute(setupFile);
             }
         }
 

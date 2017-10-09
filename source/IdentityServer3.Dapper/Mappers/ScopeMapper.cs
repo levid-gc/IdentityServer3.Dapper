@@ -3,20 +3,47 @@ using IdentityServer3.Dapper.Entities;
 
 namespace IdentityServer3.Dapper.Mappers
 {
-    public class ScopeMapper : ClassMapper<Scope>
+    public class ScopeMapper : ClassMapper<Scope>, IIdentityServerMapper
     {
-        public ScopeMapper()
+        public ScopeMapper(DapperServiceOptions option)
         {
-            // use a custom schema
-            Schema("dbo");
+            Schema(option.SchemaName);
+            Table(option.TableNames.Scope);
 
-            // use different table name
-            Table("Scopes");
-
-            // Ignore this property entirely
+            Map(x => x.Id).Key(KeyType.Identity);
             Map(x => x.ScopeClaims).Ignore();
+            Map(x => x.ScopeSecrets).Ignore();
 
-            // optional, map all other columns
+            AutoMap();
+        }
+    }
+
+    public class ScopeClaimMapper : ClassMapper<ScopeClaim>, IIdentityServerMapper
+    {
+        public ScopeClaimMapper(DapperServiceOptions option)
+        {
+            Schema(option.SchemaName);
+            Table(option.TableNames.ScopeClaims);
+
+            Map(x => x.Id).Key(KeyType.Identity);
+            Map(x => x.ScopeId).Column("Scope_Id");
+            Map(x => x.Scope).Ignore();
+
+            AutoMap();
+        }
+    }
+
+    public class ScopeSecretMapper : ClassMapper<ScopeSecret>, IIdentityServerMapper
+    {
+        public ScopeSecretMapper(DapperServiceOptions option)
+        {
+            Schema(option.SchemaName);
+            Table(option.TableNames.ScopeSecrets);
+
+            Map(x => x.Id).Key(KeyType.Identity);
+            Map(x => x.ScopeId).Column("Scope_Id");
+            Map(x => x.Scope).Ignore();
+
             AutoMap();
         }
     }

@@ -17,5 +17,7 @@ namespace IdentityServer3.Dapper.Entities
         public virtual bool AlwaysIncludeInIdToken { get; set; }
 
         public virtual Scope Scope { get; set; }
+
+        public virtual int ScopeId { get; set; }
     }
 }

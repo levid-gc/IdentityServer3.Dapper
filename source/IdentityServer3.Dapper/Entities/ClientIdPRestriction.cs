@@ -2,13 +2,10 @@
 
 namespace IdentityServer3.Dapper.Entities
 {
-    public class ClientIdPRestriction : ClientIdPRestriction<int>
-    { }
-
-    public class ClientIdPRestriction<TKey>
+    public class ClientIdPRestriction
     {
         [Key]
-        public virtual TKey Id { get; set; }
+        public virtual int Id { get; set; }
 
         [Required]
         [StringLength(200)]

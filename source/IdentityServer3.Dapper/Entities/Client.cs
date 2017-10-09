@@ -5,21 +5,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace IdentityServer3.Dapper.Entities
 {
-    public class Client : Client<string>
-    {
-        /// <summary>
-        /// Constructor which creates a new Guid for the Id
-        /// </summary>
-        public Client()
-        {
-            Id = Guid.NewGuid().ToString();
-        }
-    }
-
-    public class Client<TKey>
+    public class Client
     {
         [Key]
-        public virtual TKey Id { get; set; }
+        public virtual int Id { get; set; }
 
         public virtual bool Enabled { get; set; }
 

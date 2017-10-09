@@ -2,13 +2,10 @@
 
 namespace IdentityServer3.Dapper.Entities
 {
-    public class ClientRedirectUri : ClientRedirectUri<int>
-    { }
-
-    public class ClientRedirectUri<TKey>
+    public class ClientRedirectUri
     {
         [Key]
-        public virtual TKey Id { get; set; }
+        public virtual int Id { get; set; }
 
         [Required]
         [StringLength(2000)]

@@ -2,13 +2,10 @@
 
 namespace IdentityServer3.Dapper.Entities
 {
-    public class ClientPostLogoutRedirectUri : ClientPostLogoutRedirectUri<int>
-    { }
-
-    public class ClientPostLogoutRedirectUri<TKey>
+    public class ClientPostLogoutRedirectUri
     {
         [Key]
-        public virtual TKey Id { get; set; }
+        public virtual int Id { get; set; }
 
         [Required]
         [StringLength(2000)]
