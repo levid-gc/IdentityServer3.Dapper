@@ -76,6 +76,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IntegrationTests\SQLServer\ClientTests.cs" />
     <Compile Include="IntegrationTests\SQLServer\ScopeTests.cs" />
     <Compile Include="IntegrationTests\SQLServer\SQLServerTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

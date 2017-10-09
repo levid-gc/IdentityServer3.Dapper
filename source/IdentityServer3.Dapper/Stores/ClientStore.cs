@@ -1,13 +1,12 @@
-﻿#region Usings
-
-using Dapper;
+﻿using Dapper;
+using DapperExtensions;
 using IdentityServer3.Core.Services;
 using IdentityServer3.Dapper.Entities;
+using IdentityServer3.Dapper.Mappers;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
-#endregion
 
 namespace IdentityServer3.Dapper
 {
@@ -22,45 +21,56 @@ namespace IdentityServer3.Dapper
 
         public async Task<IdentityServer3.Core.Models.Client> FindClientByIdAsync(string clientId)
         {
-            Client client = null;
+            var parameters = new Dictionary<string, object>();
+            var dynamicParameters = new DynamicParameters();
 
-            var sql = @"SELECT * FROM SACCORE.T_CLIENT WHERE ID = @ClientId
-                        SELECT * FROM SACCORE.T_CLIENT_SECRET WHERE CLIENT_ID = @ClientId 
-                        SELECT * FROM SACCORE.T_CLIENT_REDIRECT_URI WHERE CLIENT_ID = @ClientId
-                        SELECT * FROM SACCORE.T_CLIENT_POST_LOGOUT_REDIRECT_URI WHERE CLIENT_ID = @ClientId
-                        SELECT * FROM SACCORE.T_CLIENT_SCOPE_RESTRICTION WHERE CLIENT_ID = @ClientId
-                        SELECT * FROM SACCORE.T_CLIENT_IDP_RESTRICTION WHERE CLIENT_ID = @ClientId
-                        SELECT * FROM SACCORE.T_CLIENT_CLAIM WHERE CLIENT_ID = @ClientId
-                        SELECT * FROM SACCORE.T_CLIENT_GRANT_TYPE_RESTRICTION WHERE CLIENT_ID = @ClientId
-                        SELECT * FROM SACCORE.T_CLIENT_CORS_ORIGIN WHERE CLIENT_ID = @ClientId ";
+            //var sql = @"SELECT * FROM SACCORE.T_CLIENT WHERE ID = @ClientId
+            //            SELECT * FROM SACCORE.T_CLIENT_SECRET WHERE CLIENT_ID = @ClientId 
+            //            SELECT * FROM SACCORE.T_CLIENT_REDIRECT_URI WHERE CLIENT_ID = @ClientId
+            //            SELECT * FROM SACCORE.T_CLIENT_POST_LOGOUT_REDIRECT_URI WHERE CLIENT_ID = @ClientId
+            //            SELECT * FROM SACCORE.T_CLIENT_SCOPE_RESTRICTION WHERE CLIENT_ID = @ClientId
+            //            SELECT * FROM SACCORE.T_CLIENT_IDP_RESTRICTION WHERE CLIENT_ID = @ClientId
+            //            SELECT * FROM SACCORE.T_CLIENT_CLAIM WHERE CLIENT_ID = @ClientId
+            //            SELECT * FROM SACCORE.T_CLIENT_GRANT_TYPE_RESTRICTION WHERE CLIENT_ID = @ClientId
+            //            SELECT * FROM SACCORE.T_CLIENT_CORS_ORIGIN WHERE CLIENT_ID = @ClientId ";
 
+            var sql = options.SqlGenerator.Select(new ClientMapper(options), Predicates.Field<Client>(s => s.ClientId, Operator.Eq, clientId), null, parameters);
 
-            if (this.options.SynchronousReads)
+            dynamicParameters = new DynamicParameters();
+            foreach (var parameter in parameters)
             {
-                using (var multi = this.options.Connection.QueryMultiple(sql, new { ClientId = clientId }))
-                {
-                    client = multi.Read<Client>().Single();
-                    client.ClientSecrets = multi.Read<ClientSecret>().ToList();
-                    client.RedirectUris = multi.Read<ClientRedirectUri>().ToList();
-                    client.PostLogoutRedirectUris = multi.Read<ClientPostLogoutRedirectUri>().ToList();
-                    client.AllowedScopes = multi.Read<ClientScope>().ToList();
-                    client.IdentityProviderRestrictions = multi.Read<ClientIdPRestriction>().ToList();
-                    client.Claims = multi.Read<ClientClaim>().ToList();
-                    client.AllowedCustomGrantTypes = multi.Read<ClientCustomGrantType>().ToList();
-                    client.AllowedCorsOrigins = multi.Read<ClientCorsOrigin>().ToList();
-                }
+                dynamicParameters.Add(parameter.Key, parameter.Value);
             }
-            else
+
+            var client = await options.Connection.QueryFirstOrDefaultAsync<Client>(sql, dynamicParameters);
+
+            if (client != null)
             {
-                using (var multi =  await this.options.Connection.QueryMultipleAsync(sql, new { ClientId = clientId }))
+                parameters = new Dictionary<string, object>();
+
+                sql =
+                    options.SqlGenerator.Select(new ClientSecretMapper(options), Predicates.Field<ClientSecret>(s => s.ClientId, Operator.Eq, client.Id), null, parameters) + " " +
+                    options.SqlGenerator.Select(new ClientRedirectUriMapper(options), Predicates.Field<ClientRedirectUri>(s => s.ClientId, Operator.Eq, client.Id), null, parameters) + " " +
+                    options.SqlGenerator.Select(new ClientPostLogoutRedirectUriMapper(options), Predicates.Field<ClientPostLogoutRedirectUri>(s => s.ClientId, Operator.Eq, client.Id), null, parameters) + " " +
+                    options.SqlGenerator.Select(new ClientScopeMapper(options), Predicates.Field<ClientScope>(s => s.ClientId, Operator.Eq, client.Id), null, parameters) + " " +
+                    options.SqlGenerator.Select(new ClientIdPRestrictionMapper(options), Predicates.Field<ClientIdPRestriction>(s => s.ClientId, Operator.Eq, client.Id), null, parameters) + " " +
+                    options.SqlGenerator.Select(new ClientClaimMapper(options), Predicates.Field<ClientClaim>(s => s.ClientId, Operator.Eq, client.Id), null, parameters) + " " +
+                    options.SqlGenerator.Select(new ClientCustomGrantTypeMapper(options), Predicates.Field<ClientCustomGrantType>(s => s.ClientId, Operator.Eq, client.Id), null, parameters) + " " +
+                    options.SqlGenerator.Select(new ClientCorsOriginMapper(options), Predicates.Field<ClientCorsOrigin>(s => s.ClientId, Operator.Eq, client.Id), null, parameters);
+
+                dynamicParameters = new DynamicParameters();
+                foreach (var parameter in parameters)
                 {
-                    client = multi.Read<Client>().Single();
+                    dynamicParameters.Add(parameter.Key, parameter.Value);
+                }
+
+                using (var multi = await options.Connection.QueryMultipleAsync(sql, dynamicParameters))
+                {
                     client.ClientSecrets = multi.Read<ClientSecret>().ToList();
                     client.RedirectUris = multi.Read<ClientRedirectUri>().ToList();
                     client.PostLogoutRedirectUris = multi.Read<ClientPostLogoutRedirectUri>().ToList();
                     client.AllowedScopes = multi.Read<ClientScope>().ToList();
                     client.IdentityProviderRestrictions = multi.Read<ClientIdPRestriction>().ToList();
-                    client.Claims = multi.Read<ClientClaim>().ToList();
                     client.AllowedCustomGrantTypes = multi.Read<ClientCustomGrantType>().ToList();
                     client.AllowedCorsOrigins = multi.Read<ClientCorsOrigin>().ToList();
                 }

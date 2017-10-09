@@ -79,6 +79,7 @@
     <Compile Include="Extensions\IdentityServerServiceFactoryExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="IdentityServerDapperExtensionsConfiguration.cs" />
+    <Compile Include="Mappers\ClientMapper.cs" />
     <Compile Include="Mappers\IdentityServerMapper.cs" />
     <Compile Include="Mappers\ScopeMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

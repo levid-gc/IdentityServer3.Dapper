@@ -75,7 +75,7 @@ namespace IdentityServer3.Dapper
         public string ClientSecrets
         {
             get { return String.IsNullOrEmpty(this._clientSecrets) ? "ClientSecrets" : this._client; }
-            set { this._clientScopes = value.Trim(); }
+            set { this._clientSecrets = value.Trim(); }
         }
 
         public string Scope

@@ -14,10 +14,7 @@ namespace IdentityServer3.Dapper.Entities
 
         [Required]
         [StringLength(200)]
-        //[Index(IsUnique = true)]
         public virtual string ClientId { get; set; }
-
-        public virtual ICollection<ClientSecret> ClientSecrets { get; set; }
 
         [Required]
         [StringLength(200)]
@@ -33,15 +30,11 @@ namespace IdentityServer3.Dapper.Entities
         public virtual Flows Flow { get; set; }
         public virtual bool AllowClientCredentialsOnly { get; set; }
 
-        public virtual ICollection<ClientRedirectUri> RedirectUris { get; set; }
-        public virtual ICollection<ClientPostLogoutRedirectUri> PostLogoutRedirectUris { get; set; }
-
         public virtual string LogoutUri { get; set; }
         public virtual bool LogoutSessionRequired { get; set; }
         public virtual bool RequireSignOutPrompt { get; set; }
 
         public virtual bool AllowAccessToAllScopes { get; set; }
-        public virtual ICollection<ClientScope> AllowedScopes { get; set; }
 
         // in seconds
         [Range(0, Int32.MaxValue)]
@@ -64,15 +57,24 @@ namespace IdentityServer3.Dapper.Entities
         public virtual AccessTokenType AccessTokenType { get; set; }
 
         public virtual bool EnableLocalLogin { get; set; }
-        public virtual ICollection<ClientIdPRestriction> IdentityProviderRestrictions { get; set; }
-
+        
         public virtual bool IncludeJwtId { get; set; }
 
-        public virtual ICollection<ClientClaim> Claims { get; set; }
         public virtual bool AlwaysSendClientClaims { get; set; }
         public virtual bool PrefixClientClaims { get; set; }
 
         public virtual bool AllowAccessToAllGrantTypes { get; set; }
+
+        public virtual ICollection<ClientSecret> ClientSecrets { get; set; }
+
+        public virtual ICollection<ClientRedirectUri> RedirectUris { get; set; }
+        public virtual ICollection<ClientPostLogoutRedirectUri> PostLogoutRedirectUris { get; set; }
+
+        public virtual ICollection<ClientScope> AllowedScopes { get; set; }
+
+        public virtual ICollection<ClientIdPRestriction> IdentityProviderRestrictions { get; set; }
+
+        public virtual ICollection<ClientClaim> Claims { get; set; }
 
         public virtual ICollection<ClientCustomGrantType> AllowedCustomGrantTypes { get; set; }
         public virtual ICollection<ClientCorsOrigin> AllowedCorsOrigins { get; set; }

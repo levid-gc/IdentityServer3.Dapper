@@ -12,5 +12,7 @@ namespace IdentityServer3.Dapper.Entities
         public virtual string Provider { get; set; }
 
         public virtual Client Client { get; set; }
+
+        public virtual int ClientId { get; set; }
     }
 }
