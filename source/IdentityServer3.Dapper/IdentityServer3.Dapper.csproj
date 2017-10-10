@@ -80,8 +80,10 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="IdentityServerDapperExtensionsConfiguration.cs" />
     <Compile Include="Mappers\ClientMapper.cs" />
+    <Compile Include="Mappers\ConsentMapper.cs" />
     <Compile Include="Mappers\IdentityServerMapper.cs" />
     <Compile Include="Mappers\ScopeMapper.cs" />
+    <Compile Include="Mappers\TokenMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Registrations\ClientConfigurationCorsPolicyRegistration.cs" />
     <Compile Include="Serialization\AsyncHelper.cs" />

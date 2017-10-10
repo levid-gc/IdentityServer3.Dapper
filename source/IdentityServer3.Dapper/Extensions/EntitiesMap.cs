@@ -1,10 +1,6 @@
-﻿#region Usings
-
-using AutoMapper;
+﻿using AutoMapper;
 using System.Linq;
 using System.Security.Claims;
-
-#endregion
 
 namespace IdentityServer3.Dapper.Entities
 {

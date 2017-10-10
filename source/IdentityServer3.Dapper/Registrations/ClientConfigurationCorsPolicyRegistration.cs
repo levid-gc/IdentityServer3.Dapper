@@ -1,10 +1,6 @@
-﻿#region Usings
-
-using IdentityServer3.Core.Configuration;
+﻿using IdentityServer3.Core.Configuration;
 using IdentityServer3.Core.Services;
 using System;
-
-#endregion
 
 namespace IdentityServer3.Dapper
 {

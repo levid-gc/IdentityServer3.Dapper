@@ -1,12 +1,11 @@
-﻿#region Usings
-
-using Dapper;
+﻿using Dapper;
 using IdentityServer3.Core.Services;
+using IdentityServer3.Dapper.Entities;
+using IdentityServer3.Dapper.Mappers;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
-#endregion
 
 namespace IdentityServer3.Dapper
 {
@@ -21,9 +20,9 @@ namespace IdentityServer3.Dapper
 
         public async Task<bool> IsOriginAllowedAsync(string origin)
         {
-            var sql = @"SELECT Origin FROM SACCORE.T_CLIENT_CORS_ORIGIN";
+            var sql = options.SqlGenerator.Select(new ClientCorsOriginMapper(options), null, null, new Dictionary<string, object>());
 
-            var urls = (await this.options.Connection.QueryAsync<string>(sql)).ToArray();
+            var urls = (await this.options.Connection.QueryAsync<ClientCorsOrigin>(sql)).Select(x => x.Origin).ToArray();
 
             var origins = urls.Select(x => x.GetOrigin()).Where(x => x != null).Distinct();
 

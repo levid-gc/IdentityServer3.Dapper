@@ -1,12 +1,9 @@
-﻿#region Usings
-
-using Dapper;
+﻿using Dapper;
 using IdentityServer3.Core.Models;
 using IdentityServer3.Core.Services;
+using IdentityServer3.Dapper.Mappers;
 using System;
 using System.Threading.Tasks;
-
-#endregion
 
 namespace IdentityServer3.Dapper
 {
@@ -14,8 +11,7 @@ namespace IdentityServer3.Dapper
     {
         public TokenHandleStore(DapperServiceOptions options, IScopeStore scopeStore, IClientStore clientStore)
             : base(options, Entities.TokenType.TokenHandle, scopeStore, clientStore)
-        {
-        }
+        { }
 
         public override async Task StoreAsync(string key, Token value)
         {
@@ -29,9 +25,8 @@ namespace IdentityServer3.Dapper
                 TokenType = this.tokenType
             };
 
-            var sql = @"INSERT INTO SACCORE.T_TOKEN VALUES(@Key, @TokenType, @SubjectId, @ClientId, @JsonCode, @Expiry)";
-
-            await this.options.Connection.ExecuteAsync(sql, efToken);
+            var sql = options.SqlGenerator.Insert(new TokenMapper(options));
+            await options.Connection.ExecuteAsync(sql, efToken);
         }
     }
 }

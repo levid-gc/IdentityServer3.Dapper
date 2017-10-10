@@ -1,12 +1,8 @@
-﻿#region Usings
-
-using IdentityServer3.Core.Models;
+﻿using IdentityServer3.Core.Models;
 using IdentityServer3.Core.Services;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
-
-#endregion
 
 namespace IdentityServer3.Dapper.Serialization
 {

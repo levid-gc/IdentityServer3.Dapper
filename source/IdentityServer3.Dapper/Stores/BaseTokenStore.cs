@@ -1,17 +1,15 @@
-﻿#region Usings
-
-using Dapper;
+﻿using Dapper;
+using DapperExtensions;
 using IdentityServer3.Core.Models;
 using IdentityServer3.Core.Services;
 using IdentityServer3.Dapper.Entities;
+using IdentityServer3.Dapper.Mappers;
 using IdentityServer3.Dapper.Serialization;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-
-#endregion
 
 namespace IdentityServer3.Dapper
 {
@@ -52,20 +50,22 @@ namespace IdentityServer3.Dapper
 
         public async Task<T> GetAsync(string key)
         {
-            Entities.Token token = null;
+            var parameters = new Dictionary<string, object>();
+            var dynamicParameters = new DynamicParameters();
 
-            var sql = @"SELECT * FROM SACCORE.T_TOKEN WHERE Key = @Key AND TokenType = @TokenType";
+            var pg = new PredicateGroup { Operator = GroupOperator.And, Predicates = new List<IPredicate>() };
+            pg.Predicates.Add(Predicates.Field<Entities.Token>(t => t.Key, Operator.Eq, key));
+            pg.Predicates.Add(Predicates.Field<Entities.Token>(t => t.TokenType, Operator.Eq, tokenType));
 
-            if (options != null && options.SynchronousReads)
+            var sql = options.SqlGenerator.Select(new TokenMapper(options), pg, null, parameters);
+
+            dynamicParameters = new DynamicParameters();
+            foreach (var parameter in parameters)
             {
-                token = this.options.Connection
-                    .Query<Entities.Token>(sql, new { Key = key, TokenType = (short)tokenType }).FirstOrDefault();
+                dynamicParameters.Add(parameter.Key, parameter.Value);
             }
-            else
-            {
-                token = (await this.options.Connection
-                    .QueryAsync<Entities.Token>(sql, new { Key = key, TokenType = (short)tokenType })).FirstOrDefault();
-            }
+
+            var token = await options.Connection.QueryFirstOrDefaultAsync<Entities.Token>(sql, dynamicParameters);
 
             if (token == null || token.Expiry < DateTimeOffset.UtcNow)
             {
@@ -77,43 +77,42 @@ namespace IdentityServer3.Dapper
 
         public async Task RemoveAsync(string key)
         {
-            Entities.Token token = null;
-            var sql = @"SELECT * FROM SACCORE.T_TOKEN WHERE Key = @Key AND TokenType = @TokenType";
+            var parameters = new Dictionary<string, object>();
+            var dynamicParameters = new DynamicParameters();
 
-            if (options != null && options.SynchronousReads)
+            var pg = new PredicateGroup { Operator = GroupOperator.And, Predicates = new List<IPredicate>() };
+            pg.Predicates.Add(Predicates.Field<Entities.Token>(t => t.Key, Operator.Eq, key));
+            pg.Predicates.Add(Predicates.Field<Entities.Token>(t => t.TokenType, Operator.Eq, tokenType));
+
+            var sql = options.SqlGenerator.Delete(new TokenMapper(options), pg, parameters);
+
+            dynamicParameters = new DynamicParameters();
+            foreach (var parameter in parameters)
             {
-                token = this.options.Connection
-                    .Query<Entities.Token>(sql, new { Key = key, TokenType = (short)tokenType }).FirstOrDefault();
-            }
-            else
-            {
-                token = (await this.options.Connection
-                    .QueryAsync<Entities.Token>(sql, new { Key = key, TokenType = (short)tokenType })).FirstOrDefault();
+                dynamicParameters.Add(parameter.Key, parameter.Value);
             }
 
-            if (token != null)
-            {
-                sql = @"DELETE FROM SACCORE.T_TOKEN WHERE Key = @Key AND TokenType = @TokenType";
-                await this.options.Connection
-                    .ExecuteAsync(sql, new { Key = token.Key, TokenType = (short)token.TokenType });
-            }
+            await options.Connection.ExecuteAsync(sql, dynamicParameters);
         }
 
         public async Task<IEnumerable<ITokenMetadata>> GetAllAsync(string subject)
         {
-            Entities.Token[] tokens = null;
-            var sql = @"SELECT * FROM SACCORE.T_TOKEN WHERE SubjectId = @SubjectId AND TokenType = @TokenType";
+            var parameters = new Dictionary<string, object>();
+            var dynamicParameters = new DynamicParameters();
 
-            if (options != null && options.SynchronousReads)
+            var pg = new PredicateGroup { Operator = GroupOperator.And, Predicates = new List<IPredicate>() };
+            pg.Predicates.Add(Predicates.Field<Entities.Token>(t => t.SubjectId, Operator.Eq, subject));
+            pg.Predicates.Add(Predicates.Field<Entities.Token>(t => t.TokenType, Operator.Eq, tokenType));
+
+            var sql = options.SqlGenerator.Select(new TokenMapper(options), pg, null, parameters);
+
+            dynamicParameters = new DynamicParameters();
+            foreach (var parameter in parameters)
             {
-                tokens = this.options.Connection
-                    .Query<Entities.Token>(sql, new { SubjectId = subject, TokenType = (short)tokenType }).ToArray();
+                dynamicParameters.Add(parameter.Key, parameter.Value);
             }
-            else
-            {
-                tokens = (await this.options.Connection
-                    .QueryAsync<Entities.Token>(sql, new { SubjectId = subject, TokenType = (short)tokenType })).ToArray();
-            }
+
+            var tokens = await options.Connection.QueryAsync<Entities.Token>(sql, dynamicParameters);
 
             var results = tokens.Select(x => ConvertFromJson(x.JsonCode)).ToArray();
             return results.Cast<Core.Models.ITokenMetadata>();
@@ -121,26 +120,23 @@ namespace IdentityServer3.Dapper
 
         public async Task RevokeAsync(string subject, string client)
         {
-            Entities.Token[] tokens = null;
-            var sql = @"SELECT * FROM SACCORE.T_TOKEN WHERE SubjectId = @SubjectId AND ClientId = @ClientId AND TokenType = @TokenType";
+            var parameters = new Dictionary<string, object>();
+            var dynamicParameters = new DynamicParameters();
 
-            if (options != null && options.SynchronousReads)
+            var pg = new PredicateGroup { Operator = GroupOperator.And, Predicates = new List<IPredicate>() };
+            pg.Predicates.Add(Predicates.Field<Entities.Token>(t => t.SubjectId, Operator.Eq, subject));
+            pg.Predicates.Add(Predicates.Field<Entities.Token>(t => t.ClientId, Operator.Eq, client));
+            pg.Predicates.Add(Predicates.Field<Entities.Token>(t => t.TokenType, Operator.Eq, tokenType));
+
+            var sql = options.SqlGenerator.Delete(new TokenMapper(options), pg, parameters);
+
+            dynamicParameters = new DynamicParameters();
+            foreach (var parameter in parameters)
             {
-                tokens = this.options.Connection
-                    .Query<Entities.Token>(sql, new { SubjectId = subject, ClientId = client, TokenType = (short)tokenType }).ToArray();
-            }
-            else
-            {
-                tokens = (await this.options.Connection
-                    .QueryAsync<Entities.Token>(sql, new { SubjectId = subject, ClientId = client, TokenType = (short)tokenType })).ToArray();
+                dynamicParameters.Add(parameter.Key, parameter.Value);
             }
 
-            if (tokens != null && tokens.Any())
-            {
-                sql = @"DELETE FROM SACCORE.T_TOKEN WHERE SubjectId IN @SubjectIds AND ClientId IN @ClientIds AND TokenType = @TokenType";
-                await this.options.Connection
-                    .ExecuteAsync(sql, new { SubjectIds = tokens.Select(t => t.SubjectId).ToArray(), ClientIds = tokens.Select(t => t.ClientId).ToArray(), TokenType = (short)tokenType });
-            }
+            await options.Connection.ExecuteAsync(sql, dynamicParameters);
         }
 
         public abstract Task StoreAsync(string key, T value);

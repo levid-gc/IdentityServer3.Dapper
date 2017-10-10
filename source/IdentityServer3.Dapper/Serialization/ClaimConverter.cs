@@ -1,10 +1,6 @@
-﻿#region Usings
-
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Security.Claims;
-
-#endregion
 
 namespace IdentityServer3.Dapper.Serialization
 {

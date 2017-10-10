@@ -24,16 +24,6 @@ namespace IdentityServer3.Dapper
             var parameters = new Dictionary<string, object>();
             var dynamicParameters = new DynamicParameters();
 
-            //var sql = @"SELECT * FROM SACCORE.T_CLIENT WHERE ID = @ClientId
-            //            SELECT * FROM SACCORE.T_CLIENT_SECRET WHERE CLIENT_ID = @ClientId 
-            //            SELECT * FROM SACCORE.T_CLIENT_REDIRECT_URI WHERE CLIENT_ID = @ClientId
-            //            SELECT * FROM SACCORE.T_CLIENT_POST_LOGOUT_REDIRECT_URI WHERE CLIENT_ID = @ClientId
-            //            SELECT * FROM SACCORE.T_CLIENT_SCOPE_RESTRICTION WHERE CLIENT_ID = @ClientId
-            //            SELECT * FROM SACCORE.T_CLIENT_IDP_RESTRICTION WHERE CLIENT_ID = @ClientId
-            //            SELECT * FROM SACCORE.T_CLIENT_CLAIM WHERE CLIENT_ID = @ClientId
-            //            SELECT * FROM SACCORE.T_CLIENT_GRANT_TYPE_RESTRICTION WHERE CLIENT_ID = @ClientId
-            //            SELECT * FROM SACCORE.T_CLIENT_CORS_ORIGIN WHERE CLIENT_ID = @ClientId ";
-
             var sql = options.SqlGenerator.Select(new ClientMapper(options), Predicates.Field<Client>(s => s.ClientId, Operator.Eq, clientId), null, parameters);
 
             dynamicParameters = new DynamicParameters();

@@ -163,7 +163,7 @@ namespace IdentityServer3.Dapper
                     dialect = new MySqlDialect();
                     break;
                 default:
-                    break;
+                    throw new NotSupportedException("dbType");
             }
 
             Config = new IdentityServerDapperExtensionsConfiguration(this, dialect);

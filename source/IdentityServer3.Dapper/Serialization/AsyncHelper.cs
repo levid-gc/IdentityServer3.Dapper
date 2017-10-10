@@ -1,10 +1,6 @@
-﻿#region Usings
-
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-
-#endregion
 
 namespace IdentityServer3.Dapper.Serialization
 {

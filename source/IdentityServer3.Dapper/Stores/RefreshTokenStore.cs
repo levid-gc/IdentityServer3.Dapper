@@ -1,13 +1,11 @@
-﻿#region Usings
-
-using Dapper;
+﻿using Dapper;
+using DapperExtensions;
 using IdentityServer3.Core.Models;
 using IdentityServer3.Core.Services;
 using IdentityServer3.Dapper.Entities;
-using System.Linq;
+using IdentityServer3.Dapper.Mappers;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-
-#endregion
 
 namespace IdentityServer3.Dapper
 {
@@ -19,49 +17,58 @@ namespace IdentityServer3.Dapper
 
         public override async Task StoreAsync(string key, RefreshToken value)
         {
-            Entities.Token token = null;
-            bool add = false;
+            var parameters = new Dictionary<string, object>();
+            var dynamicParameters = new DynamicParameters();
 
-            var sql = @"SELECT * FROM SACCORE.T_TOKEN WHERE Key = @Key AND TokenType = @TokenType";
+            var pg = new PredicateGroup { Operator = GroupOperator.And, Predicates = new List<IPredicate>() };
+            pg.Predicates.Add(Predicates.Field<Entities.Token>(t => t.Key, Operator.Eq, key));
+            pg.Predicates.Add(Predicates.Field<Entities.Token>(t => t.TokenType, Operator.Eq, tokenType));
 
-            if (options != null && options.SynchronousReads)
+            var sql = options.SqlGenerator.Select(new TokenMapper(options), pg, null, parameters);
+
+            dynamicParameters = new DynamicParameters();
+            foreach (var parameter in parameters)
             {
-                token = this.options.Connection
-                    .Query<Entities.Token>(sql, new { Key = key, TokenType = (short)tokenType }).FirstOrDefault();
+                dynamicParameters.Add(parameter.Key, parameter.Value);
             }
-            else
-            {
-                token = (await this.options.Connection
-                    .QueryAsync<Entities.Token>(sql, new { Key = key, TokenType = (short)tokenType })).FirstOrDefault();
-            }
+
+            var token = await options.Connection.QueryFirstOrDefaultAsync<Entities.Token>(sql, dynamicParameters);
 
             if (token == null)
             {
-                add = true;
-
                 token = new Entities.Token
                 {
                     Key = key,
                     SubjectId = value.SubjectId,
                     ClientId = value.ClientId,
-                    TokenType = tokenType
+                    TokenType = tokenType,
+                    JsonCode = ConvertToJson(value),
+                    Expiry = value.CreationTime.AddSeconds(value.LifeTime)
                 };
-            }
 
-            token.JsonCode = ConvertToJson(value);
-            token.Expiry = value.CreationTime.AddSeconds(value.LifeTime);
-
-            if (add)
-            {
-                sql = @"INSERT INTO SACCORE.T_TOKEN VALUES(@Key, @TokenType, @SubjectId, @ClientId, @JsonCode, @Expiry)";
+                sql = options.SqlGenerator.Insert(new TokenMapper(options));
+                await options.Connection.ExecuteAsync(sql, token);
             }
             else
             {
-                sql = @"UPDATE SACCORE.T_TOKEN SET JsonCode = @JsonCode, Expiry = @Expiry WHERE Key = @Key AND TokenType = @TokenType";
-            }
-            
+                token.JsonCode = ConvertToJson(value);
+                token.Expiry = value.CreationTime.AddSeconds(value.LifeTime);
 
-            await this.options.Connection.ExecuteAsync(sql, token);
+                parameters = new Dictionary<string, object>();
+                sql = options.SqlGenerator.Update(new TokenMapper(options), pg, parameters, true);
+
+                dynamicParameters = new DynamicParameters();
+                foreach (var parameter in parameters)
+                {
+                    dynamicParameters.Add(parameter.Key, parameter.Value);
+                }
+                dynamicParameters.Add("SubjectId", token.SubjectId);
+                dynamicParameters.Add("ClientId", token.ClientId);
+                dynamicParameters.Add("JsonCode", token.JsonCode);
+                dynamicParameters.Add("Expiry", token.Expiry);
+
+                await options.Connection.ExecuteAsync(sql, dynamicParameters);
+            }
         }
     }
 }
