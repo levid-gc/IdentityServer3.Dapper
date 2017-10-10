@@ -5,7 +5,6 @@ using IdentityServer3.Dapper.Entities;
 using IdentityServer3.Dapper.Mappers;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,13 +13,6 @@ namespace IdentityServer3.Dapper
     public class ScopeStore : IScopeStore
     {
         private readonly DapperServiceOptions options;
-
-        private readonly Func<Scope, ScopeClaim, ScopeSecret, Scope> func = (scope, claim, secret) =>
-        {
-            scope.ScopeClaims = claim != null ? new Collection<ScopeClaim>() { claim } : null;
-            scope.ScopeSecrets = secret != null ? new Collection<ScopeSecret>() { secret } : null;
-            return scope;
-        };
 
         public ScopeStore(DapperServiceOptions options)
         {
