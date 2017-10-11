@@ -19,7 +19,7 @@ namespace IdentityServer3.Dapper.Tests.IntegrationTests.DB2
         {
 
             options = new DapperServiceOptions(
-                new DB2Connection("Server=10.137.225.131;Database=idsrv3;UID=administrator;PWD=1qazXSW@;CurrentSchema=db2admin;"), dbType);
+                new DB2Connection("Server=localhost;Database=test;UID=db2user;PWD=db2pwd;CurrentSchema=db2admin;"), dbType);
 
             var files = new List<string>
                                 {
