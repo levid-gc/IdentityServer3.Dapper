@@ -3,6 +3,7 @@ using DapperExtensions;
 using IdentityServer3.Core.Services;
 using IdentityServer3.Dapper.Entities;
 using IdentityServer3.Dapper.Mappers;
+using IdentityServer3.Dapper.Sql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,7 +50,7 @@ namespace IdentityServer3.Dapper
                 var predicate2 = Predicates.Field<ScopeSecret>(s => s.ScopeId, Operator.Eq, scope.Id);
                 var sql2 = options.SqlGenerator.Select(new ScopeSecretMapper(options), predicate2, null, parameters);
 
-                sql = sql1 + " " + sql2;
+                sql = sql1 + " ; " + sql2;
 
                 dynamicParameters = new DynamicParameters();
                 foreach (var parameter in parameters)
@@ -82,7 +83,15 @@ namespace IdentityServer3.Dapper
 
             foreach (var parameter in parameters)
             {
-                dynamicParameters.Add(parameter.Key, parameter.Value);
+                // in DB2, we manually translate boolean type to corresponding samllint type
+                if (options.Config.Dialect is DB2DialectCustom)
+                {
+                    dynamicParameters.Add(parameter.Key, (bool)parameter.Value ? 1 : 0);
+                }
+                else
+                {
+                    dynamicParameters.Add(parameter.Key, parameter.Value);
+                }
             }
 
             var scopes = await options.Connection.QueryAsync<Scope>(sql, dynamicParameters);
@@ -97,7 +106,7 @@ namespace IdentityServer3.Dapper
                 var predicate2 = Predicates.Field<ScopeSecret>(s => s.ScopeId, Operator.Eq, scope.Id);
                 var sql2 = options.SqlGenerator.Select(new ScopeSecretMapper(options), predicate2, null, parameters);
 
-                sql = sql1 + " " + sql2;
+                sql = sql1 + " ; " + sql2;
 
                 dynamicParameters = new DynamicParameters();
                 foreach (var parameter in parameters)

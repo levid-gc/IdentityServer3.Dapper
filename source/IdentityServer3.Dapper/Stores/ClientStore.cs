@@ -39,13 +39,13 @@ namespace IdentityServer3.Dapper
                 parameters = new Dictionary<string, object>();
 
                 sql =
-                    options.SqlGenerator.Select(new ClientSecretMapper(options), Predicates.Field<ClientSecret>(s => s.ClientId, Operator.Eq, client.Id), null, parameters) + " " +
-                    options.SqlGenerator.Select(new ClientRedirectUriMapper(options), Predicates.Field<ClientRedirectUri>(s => s.ClientId, Operator.Eq, client.Id), null, parameters) + " " +
-                    options.SqlGenerator.Select(new ClientPostLogoutRedirectUriMapper(options), Predicates.Field<ClientPostLogoutRedirectUri>(s => s.ClientId, Operator.Eq, client.Id), null, parameters) + " " +
-                    options.SqlGenerator.Select(new ClientScopeMapper(options), Predicates.Field<ClientScope>(s => s.ClientId, Operator.Eq, client.Id), null, parameters) + " " +
-                    options.SqlGenerator.Select(new ClientIdPRestrictionMapper(options), Predicates.Field<ClientIdPRestriction>(s => s.ClientId, Operator.Eq, client.Id), null, parameters) + " " +
-                    options.SqlGenerator.Select(new ClientClaimMapper(options), Predicates.Field<ClientClaim>(s => s.ClientId, Operator.Eq, client.Id), null, parameters) + " " +
-                    options.SqlGenerator.Select(new ClientCustomGrantTypeMapper(options), Predicates.Field<ClientCustomGrantType>(s => s.ClientId, Operator.Eq, client.Id), null, parameters) + " " +
+                    options.SqlGenerator.Select(new ClientSecretMapper(options), Predicates.Field<ClientSecret>(s => s.ClientId, Operator.Eq, client.Id), null, parameters) + " ; " +
+                    options.SqlGenerator.Select(new ClientRedirectUriMapper(options), Predicates.Field<ClientRedirectUri>(s => s.ClientId, Operator.Eq, client.Id), null, parameters) + " ; " +
+                    options.SqlGenerator.Select(new ClientPostLogoutRedirectUriMapper(options), Predicates.Field<ClientPostLogoutRedirectUri>(s => s.ClientId, Operator.Eq, client.Id), null, parameters) + " ; " +
+                    options.SqlGenerator.Select(new ClientScopeMapper(options), Predicates.Field<ClientScope>(s => s.ClientId, Operator.Eq, client.Id), null, parameters) + " ; " +
+                    options.SqlGenerator.Select(new ClientIdPRestrictionMapper(options), Predicates.Field<ClientIdPRestriction>(s => s.ClientId, Operator.Eq, client.Id), null, parameters) + " ; " +
+                    options.SqlGenerator.Select(new ClientClaimMapper(options), Predicates.Field<ClientClaim>(s => s.ClientId, Operator.Eq, client.Id), null, parameters) + " ; " +
+                    options.SqlGenerator.Select(new ClientCustomGrantTypeMapper(options), Predicates.Field<ClientCustomGrantType>(s => s.ClientId, Operator.Eq, client.Id), null, parameters) + " ; " +
                     options.SqlGenerator.Select(new ClientCorsOriginMapper(options), Predicates.Field<ClientCorsOrigin>(s => s.ClientId, Operator.Eq, client.Id), null, parameters);
 
                 dynamicParameters = new DynamicParameters();
