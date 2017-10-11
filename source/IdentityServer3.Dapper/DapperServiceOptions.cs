@@ -1,5 +1,6 @@
 ﻿using DapperExtensions;
 using DapperExtensions.Sql;
+using IdentityServer3.Dapper.Sql;
 using System;
 using System.Data;
 
@@ -157,7 +158,7 @@ namespace IdentityServer3.Dapper
                     dialect = new OracleDialect();
                     break;
                 case DbType.DB2:
-                    dialect = new DB2Dialect();
+                    dialect = new DB2DialectCustom();
                     break;
                 case DbType.MySQL:
                     dialect = new MySqlDialect();

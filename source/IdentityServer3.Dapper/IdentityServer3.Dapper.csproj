@@ -92,6 +92,7 @@
     <Compile Include="Serialization\ClientConverter.cs" />
     <Compile Include="Serialization\ScopeConverter.cs" />
     <Compile Include="Services\ClientConfigurationCorsPolicyService.cs" />
+    <Compile Include="Sql\DB2DialectCustom.cs" />
     <Compile Include="Stores\AuthorizationCodeStore.cs" />
     <Compile Include="Stores\BaseTokenStore.cs" />
     <Compile Include="Stores\ClientStore.cs" />
@@ -103,5 +104,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

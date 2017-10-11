@@ -50,6 +50,14 @@
     <Reference Include="DapperExtensions, Version=1.6.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\DapperExtensions.1.6.3\lib\net45\DapperExtensions.dll</HintPath>
     </Reference>
+    <Reference Include="IBM.Data.DB2, Version=9.7.4.4, Culture=neutral, PublicKeyToken=7c307b91aa13d208, processorArchitecture=AMD64">
+      <HintPath>..\packages\IBM.Data.DB2.10.0.5.5\lib\net451\IBM.Data.DB2.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="IBM.Data.DB2.Entity, Version=9.7.4.4, Culture=neutral, PublicKeyToken=7c307b91aa13d208, processorArchitecture=AMD64">
+      <HintPath>..\packages\IBM.Data.DB2.10.0.5.5\lib\net451\IBM.Data.DB2.Entity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="IdentityServer3, Version=2.6.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\IdentityServer3.2.6.1\lib\net45\IdentityServer3.dll</HintPath>
     </Reference>
@@ -76,6 +84,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IntegrationTests\DB2\ClientTests.cs" />
+    <Compile Include="IntegrationTests\DB2\DB2TestBase.cs" />
+    <Compile Include="IntegrationTests\DB2\ScopeTests.cs" />
     <Compile Include="IntegrationTests\SQLServer\ClientTests.cs" />
     <Compile Include="IntegrationTests\SQLServer\ScopeTests.cs" />
     <Compile Include="IntegrationTests\SQLServer\SQLServerTestBase.cs" />
@@ -97,7 +108,9 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Content Include="IntegrationTests\DB2\Sql\clients.sql" />
+    <EmbeddedResource Include="IntegrationTests\DB2\Sql\clients.sql" />
+    <EmbeddedResource Include="IntegrationTests\DB2\Sql\operational.sql" />
+    <EmbeddedResource Include="IntegrationTests\DB2\Sql\scopes.sql" />
     <Content Include="IntegrationTests\DB2\Sql\tablespace32k.sql" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
