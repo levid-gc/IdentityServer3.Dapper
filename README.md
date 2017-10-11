@@ -8,7 +8,7 @@ We haven't make a throughly tests for our lib, so if you want use it, please be 
 
 ### Supported Databases
 
-We plan to support SQL Server, DB2, Oracle and MySQL, but at this stage, we just have complete adaption for [SQL Server](./IdentityServer3.Dapper.Tests/IntegrationTests/SQLServer/Sql) and [DB2](./IdentityServer3.Dapper.Tests/IntegrationTests/DB2/Sql) (may have bugs).
+We plan to support SQL Server, DB2, Oracle and MySQL, but at this stage, we just have complete adaption for [SQL Server](./source/IdentityServer3.Dapper.Tests/IntegrationTests/SQLServer/Sql) and [DB2](./source/IdentityServer3.Dapper.Tests/IntegrationTests/DB2/Sql) (may have bugs).
 
 ### Features
 
