@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>IdentityServer3.Dapper</id>
+    <version>0.0.1</version>
+    <title>$title$</title>
+    <authors>Levid_GC</authors>
+    <owners>Levid_GC</owners>
+    <licenseUrl>https://github.com/levid-gc/IdentityServer3.Dapper/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/levid-gc/IdentityServer3.Dapper</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Dapper for IdentityServer3 including Clinet, Scope and Token etc.</description>
+    <releaseNotes>Pre release</releaseNotes>
+    <copyright>Copyright 2017</copyright>
+    <tags>IdentityServer3 Dapper</tags>
+  </metadata>
+</package>
