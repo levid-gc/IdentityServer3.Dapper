@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("IdentityServer3.Dapper")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Dapper for IdentityServer3 including Clinet, Scope and Token etc.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("IdentityServer3.Dapper")]
